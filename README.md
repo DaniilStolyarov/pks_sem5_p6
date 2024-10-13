@@ -12,7 +12,9 @@
 ## Порядок выполнения
 ### Шаг 1. Адаптируем проект для использования sqlite
 <pre>flutter pub add sqflite path</pre>
-В класс GlobalData я добавил <pre>Future<void> initDatabase() async {
+В класс GlobalData я добавил 
+
+<pre>Future<void> initDatabase() async {
     WidgetsFlutterBinding.ensureInitialized();
     appDatabase = await openDatabase(
 
@@ -42,8 +44,11 @@
     },
     version: 1
   );    
-}</pre> - открывает соединение с базой данных,
-а также <pre>Future<void> fetchAllItems() async {
+}</pre>
+- открывает соединение с базой данных,
+а также
+
+<pre>Future<void> fetchAllItems() async {
     final shopItemMap = await (appDatabase?.query('shop_items'));
     shopItems = shopItemMap!.map((map) => ShopItem.fromMap(map)).toList();
 
@@ -55,7 +60,8 @@
     return await CartItem.fromMap(map);
      }));
   }
-}</pre>, с помощью которого будет подгружаться вся информация из БД, например при запуске приложения.
+}</pre>
+с помощью которого будет подгружаться вся информация из БД, например при запуске приложения.
 
 <p>При добавлении или изменении данных, кроме списков представления (shopItems, favouriteItems, cartItems) дополнительно также обновляются данные в БД</p>
 ### Шаг 2.
