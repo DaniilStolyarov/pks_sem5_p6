@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shop_catalog/components/card_preview.dart';
 import 'package:shop_catalog/main.dart';
 import 'package:shop_catalog/models/shop_item.dart';
-import 'package:shop_catalog/pages/add_item.dart';
 import 'package:shop_catalog/pages/item_view.dart';
 
 

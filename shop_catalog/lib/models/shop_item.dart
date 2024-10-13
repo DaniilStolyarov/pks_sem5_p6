@@ -17,4 +17,20 @@ class ShopItem {
   factory ShopItem.fromJson(Map<String, dynamic> json) =>
       _$ShopItemFromJson(json);
   Map<String, dynamic> toJson() => _$ShopItemToJson(this);
+
+  Map<String, Object?> toMap() {
+      return {
+        'id': Id,
+        'name': Name,
+        'category': Category,
+        'price_rubles': PriceRubles,
+        'image_href': ImageHref,
+        'description': Description,
+      };
+    }
+  static ShopItem fromMap(Map<String, Object?> objectMap)
+  {
+    return ShopItem(objectMap['id'] as int, objectMap['name'] as String, objectMap['description'] as String,
+    objectMap['price_rubles'] as int, objectMap['image_href'] as String, objectMap['description'] as String);
+  }
 }
