@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_catalog/components/card_preview.dart';
 import 'package:shop_catalog/main.dart';
 import 'package:shop_catalog/models/cart_item.dart';
 import 'package:shop_catalog/models/shop_item.dart';
@@ -17,98 +16,125 @@ class CartState extends State<Cart> {
   void initState() {
     super.initState();
     appData.cartState = this;
-    if (cartItems.isEmpty) {
-      cartItems.add(CartItem(
-          1,
-          ShopItem(
-              1,
-              "Боб",
-              "Стрижка и укладка",
-              666,
-              "https://i.imgur.com/pLhAUHv.jpeg",
-              "Боб — это классическая и универсальная стрижка, которая подходит для любого типа волос и формы лица. Она может быть выполнена различной длины и формы, от короткого, доходящего до подбородка боба до длинного, доходящего до плеч боба. Боб идеально подходит для тех, кто хочет добавить объем и текстуру своим волосам, а также скрыть недостатки лица и подчеркнуть скулы."),
-          DateTime.now(),
-          1));
-    }
+    
   }
 
   List<CartItem> cartItems = appData.cartItems;
-
   void forceUpdateState() {
     if (mounted) {
       setState(() {});
     }
   }
-
+  int calcTotalAmount()
+  {
+    int total = 0;
+    for (final cart_item in cartItems)
+    {
+      total += cart_item.item.PriceRubles * cart_item.count;
+    }
+    return total;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: cartItems.isEmpty
-            ? Center(child: Text("Вы пока ничего не добавили в Корзину."))
-            : ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 0),
-                itemCount: cartItems.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Slidable(
-                    key: Key(index.toString()),
-                    endActionPane: ActionPane(
-                        motion: StretchMotion(),
-                        extentRatio: 0.3,
-                        children: [
-                          SlidableAction(
-                            onPressed: (context) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Удалить запись'),
-                                    content: Text(
-                                        'Вы действительно хотите удалить "${cartItems[index].item.Name}"?'),
-                                    actions: [
-                                      TextButton(
-                                        child: Text('Отмена'),
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); 
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text('Удалить'),
-                                        onPressed: () {
-                                          setState(() {
-                                            cartItems.removeAt(
-                                                index); 
-                                          });
-                                          Navigator.of(context)
-                                              .pop(); 
-                                        },
-                                      ),
-                                    ],
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 60, top: 15),
+            child: cartItems.isEmpty
+                ? Center(child: Text("Вы пока ничего не добавили в Корзину."))
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                    itemCount: cartItems.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Slidable(
+                        key: Key(index.toString()),
+                        endActionPane: ActionPane(
+                            motion: StretchMotion(),
+                            extentRatio: 0.3,
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Удалить запись'),
+                                        content: Text(
+                                            'Вы действительно хотите удалить "${cartItems[index].item.Name}"?'),
+                                        actions: [
+                                          TextButton(
+                                            child: Text('Отмена'),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); 
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text('Удалить'),
+                                            onPressed: () async {
+                                              int id = appData.cartItems[index].id;
+                                              setState(() {
+                                                cartItems.removeAt(
+                                                    index); 
+                                              });
+                                       
+                                              await appData.appDatabase!.delete('cart_items',
+                                              where: 'id = ?', whereArgs: [id]);
+                                              Navigator.of(context)
+                                                  .pop(); 
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                            backgroundColor: Theme.of(context).canvasColor,
-                            foregroundColor: Colors.red,
-                            icon: Icons.delete,
-                            label: 'Удалить',
-                          )
-                        ]),
-                    child: GestureDetector(
-                      child: cart_item_preview(cartItem: cartItems[index]),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ItemView(shopItem: cartItems[index].item)));
-                      },
-                    ),
-                  );
-                },
+                                backgroundColor: Theme.of(context).canvasColor,
+                                foregroundColor: Colors.red,
+                                icon: Icons.delete,
+                                label: 'Удалить',
+                              )
+                            ]),
+                        child: GestureDetector(
+                          child: cart_item_preview(cartItem: cartItems[index]),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ItemView(shopItem: cartItems[index].item)));
+                          },
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 40, left: 20, bottom: 5),
+            child: SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(onPressed: (){}, child: Text("Оплатить", style: TextStyle(fontSize: 18, color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),),
+                  Row(
+                    children: [
+                      const Text("Итог: ", style: TextStyle(fontSize: 18)),
+                      Text("${calcTotalAmount()} руб.", style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.lightBlueAccent),),
+                    ],
+                  ),
+                ],
               ),
+            ),
+          )
+        )
+        ],
       ),
     );
   }
@@ -170,9 +196,7 @@ class cart_item_previewState extends State<cart_item_preview> {
                         Text(widget.cartItem.item.Name,
                             style: TextStyle(fontSize: 16)),
                         Text(
-                            widget.cartItem.serviceTime
-                                .toString()
-                                .substring(0, 13),
+                            widget.cartItem.item.Category,
                             style: TextStyle(fontSize: 15)),
                       ],
                     ),
@@ -192,6 +216,7 @@ class cart_item_previewState extends State<cart_item_preview> {
                               setState(() {
                                 widget.cartItem.count -= 1;
                               });
+                              appData.cartState!.forceUpdateState();
                             }
                           },
                           icon: Icon(Icons.remove),
@@ -210,6 +235,7 @@ class cart_item_previewState extends State<cart_item_preview> {
                             setState(() {
                               widget.cartItem.count += 1;
                             });
+                            appData.cartState!.forceUpdateState();
                           },
                           icon: Icon(Icons.add),
                           iconSize: 30,

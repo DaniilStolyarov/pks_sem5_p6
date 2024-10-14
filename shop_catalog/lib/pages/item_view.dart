@@ -11,7 +11,6 @@ class ItemView extends StatefulWidget {
 }
 
 class ItemViewState extends State<ItemView> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

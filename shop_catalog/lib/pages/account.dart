@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
-class AccountPage extends StatelessWidget{
+import 'package:shop_catalog/main.dart';
+import 'package:shop_catalog/pages/account_update.dart';
+class AccountPage extends StatefulWidget{
   const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => AccountPageState();
+}
+
+class AccountPageState extends State<AccountPage> {
+  @override
+  void initState() {
+    super.initState();
+    appData.accountPageState = this;
+  }
+  void forceUpdateState()
+  {
+    setState(() {
+      
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,15 +31,18 @@ class AccountPage extends StatelessWidget{
             SizedBox(height: 100,),
             Icon(Icons.account_circle, size: 200.0),
             SizedBox(height: 10,),
-            Text("Даниил Столяров", style: TextStyle(
+            Text(appData.account!.name, style: TextStyle(
               fontSize: 22
             ),),
             SizedBox(height: 10,),
-            Text("22T0318@gmail.com"),
+            Text(appData.account!.email),
             SizedBox(height: 10,),
-            Text("+79876543210"),
+            Text(appData.account!.phoneNumber),
             SizedBox(height: 20,),
-            TextButton(onPressed: (){}, child: Text("Сменить пароль", style: TextStyle(fontSize: 18),),),
+            TextButton(onPressed: (){
+              
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AccountUpdatePage()));
+            }, child: Text("Обновить данные", style: TextStyle(fontSize: 18),),),
           ],
         ),
       ),

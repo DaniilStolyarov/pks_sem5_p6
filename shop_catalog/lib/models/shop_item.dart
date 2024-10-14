@@ -29,7 +29,7 @@ class ShopItem {
     }
   static ShopItem fromMap(Map<String, Object?> objectMap)
   {
-    return ShopItem(objectMap['id'] as int, objectMap['name'] as String, objectMap['description'] as String,
+    return ShopItem(objectMap['id'] as int, objectMap['name'] as String, objectMap['category'] as String,
     objectMap['price_rubles'] as int, objectMap['image_href'] as String, objectMap['description'] as String);
   }
 }

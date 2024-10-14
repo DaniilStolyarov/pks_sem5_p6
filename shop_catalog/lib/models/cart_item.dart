@@ -17,11 +17,11 @@ class CartItem {
       }
   static Future<CartItem> fromMap(Map<String, Object?> objectMap)
   async {
-    int shop_item_id = objectMap['shop_item_id'] as int;
+    int shopItemId = objectMap['shop_item_id'] as int;
     final List<Map<String, dynamic>> result = await appData.appDatabase!.query(
     'shop_items',
     where: 'id = ?',
-    whereArgs: [shop_item_id],
+    whereArgs: [shopItemId],
   );
     ShopItem shopItem = ShopItem.fromMap(result.first);
     return CartItem(objectMap['id'] as int, shopItem, DateTime.parse(objectMap['service_time'] as String), objectMap['count'] as int);

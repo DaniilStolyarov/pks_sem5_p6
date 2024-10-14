@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
+import 'package:shop_catalog/models/account.dart';
+import 'package:shop_catalog/pages/account.dart';
 import 'package:shop_catalog/pages/cart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:shop_catalog/models/shop_item.dart';
@@ -11,6 +13,8 @@ class GlobalData
   List<ShopItem> shopItems = [];
   List<ShopItem> favouriteItems = [];
   List<CartItem> cartItems = [];
+  Account? account;
+  AccountPageState? accountPageState; 
   FavouriteState? favouriteState; 
   CartState? cartState;
  
@@ -53,6 +57,9 @@ class GlobalData
       await db.execute(
         'CREATE TABLE cart_items(id INTEGER PRIMARY KEY, shop_item_id INTEGER, service_time TIMESTAMP, count INTEGER)'
       );
+      await db.execute(
+        'CREATE TABLE accounts(id INTEGER PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT)'
+      );
       await db.insert('shop_items', ShopItem(-1, "Боб", "Стрижка и укладка", 799, "https://i.imgur.com/pLhAUHv.jpeg", "Боб — это классическая и универсальная стрижка, которая подходит для любого типа волос и формы лица. Она может быть выполнена различной длины и формы, от короткого, доходящего до подбородка боба до длинного, доходящего до плеч боба. Боб идеально подходит для тех, кто хочет добавить объем и текстуру своим волосам, а также скрыть недостатки лица и подчеркнуть скулы.").toMap());
       await db.insert('shop_items', ShopItem(-1, "Цезарь", "Стрижка и укладка", 699, "https://i.imgur.com/G8eOfAE.jpeg", "Цезарь — это короткая мужская стрижка с ровной челкой и короткими, одинаковой длины волосами по бокам и сзади. Она идеально подходит для мужчин с прямыми или волнистыми волосами и квадратной или круглой формой лица. Стрижка Цезарь — это стильный и универсальный вариант, который легко укладывать и поддерживать.").toMap());
       await db.insert('shop_items', ShopItem(-1, "Гарсон", "Стрижка и укладка", 599, "https://i.imgur.com/Atfpw5S.jpeg", "Гарсон — это короткая, женственная стрижка, которая добавляет образу дерзости и стиля. Она характеризуется короткими, филированными волосами, часто с челкой или асимметрией. Гарсон идеально подходит для тех, кто хочет добавить объем и текстуру тонким волосам, а также скрыть недостатки лица и подчеркнуть скулы.").toMap());
@@ -64,7 +71,7 @@ class GlobalData
       await db.insert('shop_items', ShopItem(-1, "Короткое Каре", "Стрижка и укладка", 899, "https://i.imgur.com/HroeZo2.jpeg", "Короткое Каре — это элегантная и стильная стрижка, которая характеризуется прямыми волосами, подстриженными до уровня подбородка или чуть выше. Короткое каре — это универсальный и практичный вариант, который подходит для любого типа волос и формы лица. Оно легко укладывается и позволяет создавать различные образы, от классических и сдержанных до современных и авангардных.").toMap());
       await db.insert('shop_items', ShopItem(-1, "Звезда", "Стрижка и укладка", 1199, "https://i.imgur.com/dOnl5Vz.jpeg", "Звезда — это смелая и дерзкая стрижка, которая характеризуется выбритыми висками и затылком в форме звезды. Звезда — это авангардный и экстравагантный вариант, который подходит для тех, кто не боится выделяться из толпы. Она требует особого ухода и укладки, но придает образу неповторимый и притягательный вид.").toMap());
       await db.insert('shop_items', ShopItem(-1, "Теннис", "Стрижка и укладка", 599, "https://i.imgur.com/1uNHwbK.jpeg", "Теннис — это спортивная и практичная стрижка, которая характеризуется короткими волосами по всей голове, подстриженными машинкой. Теннис — это универсальный и неприхотливый вариант, который подходит для любого типа волос и формы лица. Она не требует сложной укладки и идеально подходит для тех, кто ценит удобство и аккуратный внешний вид.").toMap());
-
+      await db.insert('accounts', Account(1, "Даниил Столяров", "22T0318@gmail.com", "89876543210").toMap());
     },
     version: 1
   );    
@@ -81,5 +88,7 @@ Future<void> fetchAllItems() async {
     cartItems = await Future.wait(cartItemMap!.map((map) async {
     return await CartItem.fromMap(map);
      }));
+
+    account = Account.fromMap((await (appDatabase!.query('accounts'))).first);
   }
 }
