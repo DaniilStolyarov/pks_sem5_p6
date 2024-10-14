@@ -91,3 +91,4 @@
 
 # Результат (.gif)
 
+![изображение](https://github.com/DaniilStolyarov/pks_sem5_p6/blob/481fd3087b7f856191fba3837cfdc29b4eae3110/preview.gif)
