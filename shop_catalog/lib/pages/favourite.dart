@@ -3,6 +3,7 @@ import 'package:shop_catalog/components/card_preview.dart';
 import 'package:shop_catalog/main.dart';
 import 'package:shop_catalog/models/shop_item.dart';
 import 'package:shop_catalog/pages/item_view.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 class Favourite extends StatefulWidget {
@@ -20,17 +21,6 @@ class FavouriteState extends State<Favourite>
   }
 
   List<ShopItem> favouriteItems = appData.favouriteItems;
-  void addItem(ShopItem item) {
-    setState(() {
-      favouriteItems.add(item);
-    });
-  }
-  void removeItem(int index)
-  {
-    setState(() {
-      favouriteItems.removeAt(index);
-    });
-  }
   void forceUpdateState()
   {
     if (mounted)

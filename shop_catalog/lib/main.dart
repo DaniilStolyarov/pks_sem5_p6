@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:shop_catalog/pages/account.dart';
 import 'package:shop_catalog/pages/favourite.dart';
+import 'package:sqflite/sqflite.dart';
 import 'models/global_data.dart';
 import 'pages/cart.dart';
 import 'pages/catalog.dart';
 
 GlobalData appData = GlobalData();
 void main() async {
-
+  await appData.initDatabase();
+  await appData.fetchAllItems();
   runApp(const MyApp());
 }
 class MyApp extends StatefulWidget {

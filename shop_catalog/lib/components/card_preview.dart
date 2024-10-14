@@ -14,11 +14,7 @@ class CardPreview extends StatelessWidget {
         children: [
           ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: shopItem.isImageUrl
-                  ? Image.network(shopItem.ImageHref,
-                      height: 100,
-                      fit: BoxFit.cover)
-                  : Image.asset(shopItem.ImageHref,
+              child: Image.network(shopItem.ImageHref,
                   
                       height: MediaQuery.of(context).size.height / 8,
                       width: MediaQuery.of(context).size.width / 2,

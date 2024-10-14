@@ -20,7 +20,6 @@ class ShopItem {
 
   Map<String, Object?> toMap() {
       return {
-        'id': Id,
         'name': Name,
         'category': Category,
         'price_rubles': PriceRubles,

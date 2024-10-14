@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_catalog/main.dart';
+import 'package:shop_catalog/models/cart_item.dart';
 import 'package:shop_catalog/models/shop_item.dart';
 
 class ItemView extends StatefulWidget {
@@ -10,7 +11,7 @@ class ItemView extends StatefulWidget {
 }
 
 class ItemViewState extends State<ItemView> {
-  bool recorded = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +26,11 @@ class ItemViewState extends State<ItemView> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: widget.shopItem.isImageUrl
-                        ? Image.network(widget.shopItem.ImageHref,
+                    child: Image.network(widget.shopItem.ImageHref,
                             width: double.infinity,
                             height: MediaQuery.of(context).size.width / 2,
                             fit: BoxFit.cover)
-                        : Image.asset(widget.shopItem.ImageHref,
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.width / 2,
-                            fit: BoxFit.cover),
+                   
                   ),
                   SizedBox(
                     height: 30,
@@ -77,21 +74,27 @@ class ItemViewState extends State<ItemView> {
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
-                  onPressed: () {
-                    setState(() {
-                      int indexInFavourites = appData.indexOfFavouriteItem(widget.shopItem);
+                  onPressed: () async {
+                    int indexInFavourites = appData.indexOfFavouriteItem(widget.shopItem);
                       if (indexInFavourites == -1)
                       {
                         // добавить, если нет
-                        appData.favouriteItems.add(widget.shopItem);
+                        await appData.appDatabase!.insert('favourite_items', widget.shopItem.toMap());
+                        setState(() {
+                          appData.favouriteItems.add(widget.shopItem);
+                        });
                       }
                       else
                       {
                         // удалить, если есть
-                        appData.favouriteItems.removeAt(indexInFavourites);
+                        int id = appData.favouriteItems[indexInFavourites].Id;
+                        await appData.appDatabase!.delete('favourite_items',
+                            where: 'id = ?', whereArgs: [id]);
+                        setState(() {
+                          appData.favouriteItems.removeAt(indexInFavourites);
+                        });
                         appData.favouriteState?.forceUpdateState();
                       }
-                    });
                   },
                 ),
               )),
@@ -103,7 +106,7 @@ class ItemViewState extends State<ItemView> {
                 padding: EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: recorded
+                      backgroundColor:  (appData.indexOfCartItem(widget.shopItem) != -1)
                           ? Color.fromARGB(255, 0, 64, 3)
                           : Color.fromARGB(255, 0, 25, 64),
                       shape: RoundedRectangleBorder(
@@ -112,17 +115,35 @@ class ItemViewState extends State<ItemView> {
                       ),
                       padding: EdgeInsets.all(10.0)),
                   child: Text(
-                      recorded
+                      (appData.indexOfCartItem(widget.shopItem) != -1)
                           ? "Записано - ${widget.shopItem.PriceRubles} руб."
                           : "Записаться - ${widget.shopItem.PriceRubles} руб.",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
-                  onPressed: () {
-                    setState(() {
-                      recorded = !recorded;
-                    });
+                  onPressed: () async {
+                    int indexInCart = appData.indexOfCartItem(widget.shopItem);
+                      if (indexInCart == -1)
+                      {
+                        CartItem cartItem = CartItem(-1, widget.shopItem, DateTime.now(), 1);
+                        // добавить, если нет
+                        cartItem.id = await appData.appDatabase!.insert('cart_items', cartItem.toMap());
+                        setState(() {
+                          appData.cartItems.add(cartItem);
+                        });
+                      }
+                      else
+                      {
+                        // удалить, если есть
+                        int id = appData.cartItems[indexInCart].id;
+                        await appData.appDatabase!.delete('cart_items',
+                            where: 'id = ?', whereArgs: [id]);
+                        setState(() {
+                          appData.cartItems.removeAt(indexInCart);
+                        });
+                        appData.cartState?.forceUpdateState();
+                      }
                   },
                 ),
               ))

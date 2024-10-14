@@ -79,7 +79,6 @@ class AddItem extends StatelessWidget {
                       int.parse(priceController.text),
                       imageURLController.text,
                       descriptionController.text);
-                  newItem.isImageUrl = true;
                   catalogState.addItem(newItem);
                   Navigator.pop(context);
                 },

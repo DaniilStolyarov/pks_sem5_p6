@@ -19,18 +19,22 @@ class CatalogState extends State<Catalog>
   List<ShopItem> shopItems = appData.shopItems;
   @override void initState() {
     super.initState();
-    loadShopItems();
   }
 
   void addItem(ShopItem item) {
     setState(() {
       shopItems.add(item);
+      appData.appDatabase!.insert('shop_items', item.toMap());
     });
   }
 
   void removeItem(int index)
   {
     setState(() {
+      int id = shopItems[index].Id;
+      appData.appDatabase!.delete('shop_items', 
+      where: 'id = ?',
+      whereArgs: [id]);
       shopItems.removeAt(index);
     });
   }
@@ -68,11 +72,5 @@ class CatalogState extends State<Catalog>
       ),
     );
   }
-  Future<void> loadShopItems() async {
-    String jsonString = await rootBundle.loadString('static/Services.json');
-    List<dynamic> jsonList = jsonDecode(jsonString);
-    setState(() {
-      shopItems = jsonList.map((json) => ShopItem.fromJson(json)).toList();
-    });
-  }
+
 }
